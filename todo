@@ -1,0 +1,19 @@
+- hack the flash
+	* button to toggle sound - stored in user's profile
+	* detects when a user beats a level
+	* users shouldn't have to click to choose which level to play
+	* add code to prevent win spoofing
+	* detects deaths
+
+- better design - make it look not crappy
+- notification system - alerts when someone reviews a level or comments on your user page, with an option for email notification
+- ajax
+	* rating system
+	* any box that requires you to scroll through content - browsing, reading content, etc
+	* current users online
+	* everything that it would make sense to use ajax for
+- badges for winning levels
+- Top players - shows players who have beat lots of levels
+	* player ranking - calculated somehow 
+- on the levels page it shows a list of players who have beat this level
+- auto calculate difficulty of levels based on deaths
