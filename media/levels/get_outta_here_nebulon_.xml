@@ -1,0 +1,13 @@
+<SO><y>308</y><x>0</x><d>0</d><cT>Platform</cT><sT>44</sT></SO>
+<SO><y>308</y><x>128</x><d>1</d><cT>Platform</cT><sT>44</sT></SO>
+<SO><y>402</y><x>535</x><d>2</d><cT>Platform</cT><sT>44</sT></SO>
+<SO><y>418</y><x>454</x><d>3</d><cT>Platform</cT><sT>44</sT></SO>
+<SO><y>402</y><x>561</x><d>4</d><cT>Platform</cT><sT>44</sT></SO>
+<SO><y>391</y><x>417</x><d>5</d><cT>Platform</cT><sT>44</sT></SO>
+<SO><y>386</y><x>698</x><d>6</d><cT>Platform</cT><sT>44</sT></SO>
+<SO><y>437</y><x>849</x><d>7</d><cT>Platform</cT><sT>44</sT></SO>
+<SO><y>247</y><x>118</x><d>8</d><cT>Platform</cT><sT>40</sT></SO>
+<SO><y>137</y><x>127</x><d>9</d><cT>Platform</cT><sT>40</sT></SO>
+<SO><y>150</y><x>36</x><d>10</d><cT>Goal</cT><sT>0</sT></SO>
+<SO><y>185</y><x>127</x><d>11</d><cT>Platform</cT><sT>40</sT></SO>
+<levelProperties><bkgrdA>1</bkgrdA><playerStartY>100</playerStartY><playerStartX>100</playerStartX><ScrollLockY>false</ScrollLockY><ScrollLockX>false</ScrollLockX></levelProperties>

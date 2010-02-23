@@ -1,0 +1,27 @@
+#!/bin/bash
+
+PROJECT="stinkomanlevels"
+REMOTEHOME="/home/superjoe"
+REMOTEPATH="$(REMOTEHOME)/django_code/$(PROJECT)"
+SQLITEDB="db"
+
+# dump
+ssh web "$(REMOTEHOME)/fakeroot/usr/bin/python $(REMOTEPATH)/manage.py dumpdata --exclude=contenttypes >$(REMOTEPATH)/dump.json"
+
+# copy to here
+scp web:$(REMOTEPATH)/dump.json ./
+
+# reset the database
+rm -f $(SQLITEDB)
+
+# syncdb
+./manage.py syncdb --noinput
+./manage.py reset auth --noinput
+
+# load dump
+./manage.py loaddata dump.json
+
+# copy media
+rsync -avzu web:/home/superjoe/django_code/$(PROJECT)/media/img/avatars ./media/img/
+rsync -avzu web:/home/superjoe/django_code/$(PROJECT)/media/flp ./media/
+

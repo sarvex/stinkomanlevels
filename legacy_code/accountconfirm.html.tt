@@ -1,0 +1,18 @@
+<html><head></head><body>
+	<h1>Custom Stinkoman Levels Account Confirmation</h1>
+	
+	<p>
+		Please enter this link into your browser to confirm your account:
+	</p>
+	<p>
+		<a href="http://stinkoman.superjoesoftware.com/confirm.cgi?name=[% screen_name %]&code=[% confirm_code %]">http://stinkoman.superjoesoftware.com/confirm.cgi?name=[% screen_name %]&code=[% confirm_code %]</a>
+	</p>
+	<p>
+		Thank you!
+	</p>
+	<p>
+-Superjoe Software Admin<br>
+<a href="http://www.superjoesoftware.com">http://www.superjoesoftware.com</a>
+	</p>
+
+  </body></html>
