@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ level.title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h2>Edit {{ level.title }}</h2>
+    {% with 1 as editing %}
+    {% include 'level_form.html' %}
+    {% endwith %}
+{% endblock %}

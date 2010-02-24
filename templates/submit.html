@@ -5,82 +5,9 @@
 {% block content %}
     <h2>Submit a new Stinkoman Level</h2>
     {% if user.is_authenticated %}
-        {% if err_msg %}
-        <p>{{ err_msg }}
-        {% endif %}
-        <form action="." method="post" enctype="multipart/form-data">
-            <table class="layout">
-                <tr>
-                    <td align="right">
-                        <label for="id_title">Title:</label> <br />
-                    </td>
-                    <td>
-                        {{ form.title.errors }} <br />
-                        {{ form.title }}
-                    </td>
-                </tr>
-                <tr>
-                    <td align="right">
-                        <label for="id_stage">Stage:</label> <br />
-                    </td>
-                    <td>
-                        {{ form.stage.errors }} <br />
-                        {{ form.stage }}
-                    </td>
-                </tr>
-                <tr>
-                    <td align="right">
-                        <label for="id_difficulty">Difficulty:</label> <br />
-                    </td>
-                    <td>
-                        {{ form.difficulty.errors }} <br />
-                        {{ form.difficulty }}
-                    </td>
-                </tr>
-                <tr>
-                    <td align="right">
-                        <label for="id_length">Length:</label> <br />
-                    </td>
-                    <td>
-                        {{ form.length.errors }} <br />
-                        {{ form.length }}
-                    </td>
-                </tr>
-                <tr> <td colspan="2">&nbsp;</td></tr>
-                <tr>
-                    <td align="right">
-                        <label for="id_description">Description:</label> <br />
-                    </td>
-                    <td>
-                        {{ form.description.errors }} <br />
-                        {{ form.description }}
-                    </td>
-                </tr>
-                <tr><td colspan="2">&nbsp;</td></tr>
-                <tr><td colspan="2">
-                    Paste the XML code into the box or upload the level.
-                </td></tr>
-                <tr> <td colspan="2">
-                    <table class="layout">
-                        <tr>
-                            <td>
-                                {{ form.xml_code.errors }} <br />
-                                {{ form.xml_code }}
-                            </td>
-                            <td>
-                                {{ form.xml_file.errors }} <br />
-                                {{ form.xml_file }}
-                            </td>
-                        </tr>
-                    </table>
-                </td></tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <input type="submit" value="Upload" />
-                    </td>
-                </tr>
-            </table>
-        </form>
+        {% with 0 as editing %}
+            {% include 'level_form.html' %}
+        {% endwith %}
     {% else %}
         <p>You must <a href="/register/">register an account</a> to upload a new level. It's free and doesn't require much information.</p>
         <p>If you already have an account, <a href="/login/?next=/submit/">log in</a>.</p>

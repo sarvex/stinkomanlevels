@@ -93,7 +93,7 @@ class UploadLevelForm(forms.Form):
             ),
         ),
     )
-    title = forms.CharField(max_length=32)
+    title = forms.CharField(max_length=32, required=False)
     stage = forms.ChoiceField(choices=STAGE_CHOICES)
     difficulty = forms.ChoiceField(choices=Level.DIFFICULTY_CHOICES)
     length = forms.ChoiceField(choices=Level.LENGTH_CHOICES)

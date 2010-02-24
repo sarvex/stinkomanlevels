@@ -44,30 +44,34 @@ def upload(request):
 
 def submit(request):
     activeUser(request)
+    err_msg = ""
     if request.method == 'POST':
         form = UploadLevelForm(request.POST, request.FILES)
         if form.is_valid() and request.user.is_authenticated():
-            # create the new level
-            level = Level()
-            level.title = form.cleaned_data.get('title')
-            level.major_stage, level.minor_stage = form.cleaned_data.get('stage').split('.')
-            level.difficulty = form.cleaned_data.get('difficulty')
-            level.length = form.cleaned_data.get('length')
-            level.author = request.user.get_profile()
-            level.description = form.cleaned_data.get('description')
-            level.file = unique_level_path(level.title)
+            if len(form.cleaned_data.get('title')) == 0:
+                err_msg = "You must supply a title."
+            else:
+                # create the new level
+                level = Level()
+                level.title = form.cleaned_data.get('title')
+                level.major_stage, level.minor_stage = form.cleaned_data.get('stage').split('.')
+                level.difficulty = form.cleaned_data.get('difficulty')
+                level.length = form.cleaned_data.get('length')
+                level.author = request.user.get_profile()
+                level.description = form.cleaned_data.get('description')
+                level.file = unique_level_path(level.title)
 
-            out_path = os.path.join(MEDIA_ROOT, "levels", level.file)
-            if form.cleaned_data.get('xml_file') is not None:
-                # upload the file to that file
-                handle_uploaded_file(request.FILES['xml_file'], out_path)
-            elif form.cleaned_data.get('xml_code') is not None:
-                # write the xml code to that file
-                open(out_path, "w").write(form.cleaned_data.get('xml_code'))
+                out_path = os.path.join(MEDIA_ROOT, "levels", level.file)
+                if form.cleaned_data.get('xml_file') is not None:
+                    # upload the file to that file
+                    handle_uploaded_file(request.FILES['xml_file'], out_path)
+                elif form.cleaned_data.get('xml_code') is not None:
+                    # write the xml code to that file
+                    open(out_path, "w").write(form.cleaned_data.get('xml_code'))
 
-            level.save()
+                level.save()
 
-            return HttpResponseRedirect("/play/%s/" % level.title)
+                return HttpResponseRedirect("/play/%s/" % level.title)
     else:
         form = UploadLevelForm()
     return render_to_response('submit.html', locals(), context_instance=RequestContext(request))
@@ -246,10 +250,46 @@ def user_login(request):
         form = LoginForm(initial={'next_url': request.GET.get('next', '/')})
     return render_to_response('login.html', {'form': form, 'err_msg': err_msg }, context_instance=RequestContext(request))
 
-def edit(request):
+@login_required
+def edit(request, level_title):
     activeUser(request)
+    level = get_object_or_404(Level, title=level_title)
+    if request.method == 'POST':
+        form = UploadLevelForm(request.POST, request.FILES)
+        if form.is_valid() and request.user.is_authenticated():
+            level.major_stage, level.minor_stage = form.cleaned_data.get('stage').split('.')
+            level.difficulty = form.cleaned_data.get('difficulty')
+            level.length = form.cleaned_data.get('length')
+            level.description = form.cleaned_data.get('description')
+
+            out_path = level_path(level)
+            if form.cleaned_data.get('xml_file') is not None:
+                # upload the file to that file
+                handle_uploaded_file(request.FILES['xml_file'], out_path)
+            elif form.cleaned_data.get('xml_code') is not None:
+                # write the xml code to that file
+                open(out_path, "w").write(form.cleaned_data.get('xml_code'))
+
+            level.save()
+
+            return HttpResponseRedirect("/play/%s/" % level.title)
+    else:
+        init = {
+            'title': level.title,
+            'stage': "%s.%s" % (level.major_stage, level.minor_stage),
+            'difficulty': level.difficulty,
+            'length': level.length,
+            'description': level.description,
+            'xml_code': open(level_path(level), "r").read(),
+        }
+        form = UploadLevelForm(initial=init)
+
     return render_to_response('edit.html', locals(), context_instance=RequestContext(request))
 
+def level_path(level):
+    return os.path.join(MEDIA_ROOT, "levels", level.file)
+
+@login_required
 def dashboard(request):
     activeUser(request)
     return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))
