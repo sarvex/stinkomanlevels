@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 VERY_EASY, EASY, MEDIUM, HARD, VERY_HARD = range(5)
 VERY_SHORT, SHORT, MEDIUM, LONG, VERY_LONG = range(5)
+THUMBS_UP, THUMBS_DOWN = (1, -1)
 
 class Profile(models.Model):
     user = models.ForeignKey(User, unique=True)
@@ -10,10 +11,15 @@ class Profile(models.Model):
     activate_code = models.CharField(max_length=256)
     date_activity = models.DateTimeField(auto_now=True)
     logon_count = models.IntegerField()
+    comments = models.ManyToManyField('Comment')
 
 class Rating(models.Model):
+    RATING_CHOICES = (
+        (THUMBS_UP, 'Thumbs Up'),
+        (THUMBS_DOWN, 'Thumbs Down'),
+    )
     owner = models.ForeignKey(Profile)
-    value = models.IntegerField()
+    value = models.IntegerField(choices=RATING_CHOICES)
 
 class Comment(models.Model):
     owner = models.ForeignKey(Profile)
@@ -42,7 +48,7 @@ class Level(models.Model):
     difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES, default=MEDIUM)
     length = models.IntegerField(choices=LENGTH_CHOICES, default=MEDIUM)
     author = models.ForeignKey(Profile)
-    comments = models.TextField()
+    description = models.TextField()
     file = models.CharField(max_length=500)
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)

@@ -1,0 +1,124 @@
+#!/usr/bin/env python
+
+import os
+
+# set django environment
+from django.core.management import setup_environ
+import settings
+setup_environ(settings)
+
+# prepare csv reader
+import csv
+csv.register_dialect('phpmyadmin', delimiter=';', doublequote=False, escapechar='\\')
+
+# prepare database
+from main.models import *
+from django.contrib.auth.models import User
+os.system('rm db')
+os.system('./manage.py syncdb --noinput')
+
+# load users and add them to the db
+django_user = {}
+for row in csv.reader(open("migrating/users.csv", "rb"), 'phpmyadmin'):
+    screenname, email, password, activated, activatecode, registerdate, session, lastlogin, online = row
+    print "adding user " + screenname
+
+    user = User.objects.create_user(screenname, email, password)
+    user.date_joined = registerdate
+    user.save()
+
+    django_user[screenname] = user.id
+
+    # create a profile
+    profile = Profile()
+    profile.user = user
+    profile.activated = activated
+    profile.activate_code = activatecode
+    profile.logon_count = 1
+    profile.save()
+
+# load levels and add them to the db
+django_level = {}
+for row in csv.reader(open("migrating/levels.csv", "rb"), 'phpmyadmin'):
+    title, majorstage, minorstage, difficulty, length, author, comments, file, datecreated, ratecount, ratetotal, lastplayed = row
+
+    print "adding level " + title
+
+    # create a level
+    level = Level()
+    level.title = title
+    level.major_stage = int(majorstage)
+    level.minor_stage = int(minorstage)
+    level.difficulty = int(difficulty) + 2
+    level.length = int(length) + 2
+    level.author = User.objects.get(id=django_user[author]).get_profile()
+    level.description = comments
+    level.file = file
+    level.date_created = datecreated
+    level.last_played = lastplayed
+
+    level.save()
+    django_level[title] = level.id
+
+# load level comments and add them to the database
+for row in csv.reader(open("migrating/levelcomments.csv", "rb"), 'phpmyadmin'):
+    indexkey, level, author, content, postdate = row
+
+    if not django_level.has_key(level):
+        continue
+    if not django_user.has_key(author):
+        continue
+
+    print "adding level comment " + content[:20]
+
+    comment = Comment()
+    comment.owner = User.objects.get(id=django_user[author]).get_profile()
+    comment.text = content
+    comment.date_created = postdate
+    comment.save()
+
+    level = Level.objects.get(id=django_level[level])
+    level.comments.add(comment)
+    level.save()
+
+# load user comments and add them to the database
+for row in csv.reader(open("migrating/usercomments.csv", "rb"), 'phpmyadmin'):
+    indexkey, user, author, content, postdate = row
+
+    if not django_user.has_key(user):
+        continue
+    if not django_user.has_key(author):
+        continue
+
+    print "adding user comment " + content[:20]
+
+    comment = Comment()
+    comment.owner = User.objects.get(id=django_user[author]).get_profile()
+    comment.text = content
+    comment.date_created = postdate
+    comment.save()
+
+    profile = User.objects.get(id=django_user[user]).get_profile()
+    profile.comments.add(comment)
+    profile.save()
+
+# load ratings and add them to the database
+for row in csv.reader(open("migrating/userleveldata.csv", "rb"), 'phpmyadmin'):
+    indexkey, level, user, rate_value, victory = row
+
+    if not django_level.has_key(level):
+        continue
+    if not django_user.has_key(user):
+        continue
+
+    print "adding rating by " + user
+
+    rating = Rating()
+    rating.owner = User.objects.get(id=django_user[user]).get_profile()
+    rating.value = rate_value
+    rating.save()
+
+    level = Level.objects.get(id=django_level[level])
+    level.ratings.add(rating)
+    level.save()
+
