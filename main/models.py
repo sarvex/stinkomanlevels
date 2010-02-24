@@ -46,7 +46,7 @@ class Level(models.Model):
         (LONG, 'Long'),
         (VERY_LONG, 'Very Long'),
     )
-    title = models.CharField(max_length=256)
+    title = models.CharField(max_length=256, unique=True)
     major_stage = models.IntegerField()
     minor_stage = models.IntegerField()
     difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES, default=MEDIUM)
@@ -62,4 +62,10 @@ class Level(models.Model):
 
     def rating(self):
         return self.ratings.aggregate(models.Sum('value'))['value__sum']
+
+    def difficulty_str(self):
+        return dict(Level.DIFFICULTY_CHOICES)[self.difficulty]
+
+    def length_str(self):
+        return dict(Level.LENGTH_CHOICES)[self.length]
 

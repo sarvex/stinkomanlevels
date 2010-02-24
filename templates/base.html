@@ -49,7 +49,7 @@
             Current users online: 
             {% if online_profiles %}
                 {% for profile in online_profiles %}
-                    <a href="/user/{{ profile.user.username }}">{{ profile.user.username }}</a>
+                    <a href="/user/{{ profile.user.username }}/">{{ profile.user.username }}</a>
                 {% endfor %}
             {% else %}
                 None

@@ -19,8 +19,8 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 
     # legacy urls
-    (r'^confirm\.cgi\?name=(?P<name>.+)&code=(?P<code>.+)$',
-        redirect_to, {'url': "/confirm/%(name)s/%(code)s"}),
+    (r'^confirm.cgi$', 'stinkomanlevels.main.views.confirm'),
+
     (r'^img/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"img/%(id)s"}),
     (r'^oldlevels/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"legacy-levels/%(id)s"}),
     (r'^levels/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"levels/%(id)s"}),

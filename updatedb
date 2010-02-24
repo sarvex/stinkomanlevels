@@ -24,6 +24,7 @@ for row in csv.reader(open("migrating/users.csv", "rb"), 'phpmyadmin'):
     print "adding user " + screenname
 
     user = User.objects.create_user(screenname, email, password)
+    user.save()
     user.date_joined = registerdate
     user.save()
 
@@ -54,10 +55,12 @@ for row in csv.reader(open("migrating/levels.csv", "rb"), 'phpmyadmin'):
     level.author = User.objects.get(id=django_user[author]).get_profile()
     level.description = comments
     level.file = file
-    level.date_created = datecreated
     level.last_played = lastplayed
 
     level.save()
+    level.date_created = datecreated
+    level.save()
+
     django_level[title] = level.id
 
 # load level comments and add them to the database
@@ -74,6 +77,8 @@ for row in csv.reader(open("migrating/levelcomments.csv", "rb"), 'phpmyadmin'):
     comment = Comment()
     comment.owner = User.objects.get(id=django_user[author]).get_profile()
     comment.text = content
+    comment.save()
+
     comment.date_created = postdate
     comment.save()
 
@@ -95,6 +100,8 @@ for row in csv.reader(open("migrating/usercomments.csv", "rb"), 'phpmyadmin'):
     comment = Comment()
     comment.owner = User.objects.get(id=django_user[author]).get_profile()
     comment.text = content
+    comment.save()
+
     comment.date_created = postdate
     comment.save()
 

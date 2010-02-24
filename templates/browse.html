@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Browse Levels</h2>
+    {% include 'browse_nav.html' %}
+
+    <table>
+        <tr>
+            <th><a href="?sort=title&amp;order={{ next_sort.title }}">Title</a></th>
+            <th><a href="?sort=author&amp;order={{ next_sort.author }}">Author</a></th>
+            <th><a href="?sort=rating&amp;order={{ next_sort.rating }}">Rating</a></th>
+            <th><a href="?sort=stage&amp;order={{ next_sort.stage }}">Stage</a></th>
+            <th><a href="?sort=difficulty&amp;order={{ next_sort.difficulty }}">Difficulty</a></th>
+            <th><a href="?sort=length&amp;order={{ next_sort.length }}">Length</a></th>
+            <th><a href="?sort=datecreated&amp;order={{ next_sort.datecreated }}">Date Added</a></th>
+        </tr>
+        {% for level in levels.object_list %}
+            <tr class="{% cycle 'even' 'odd' %}">
+                <td><a href="/play/{{ level.title }}/">{{ level.title }}</a></td>
+                <td><a href="/user/{{ level.author.user.username }}/">{{ level.author.user.username }}</a></td>
+                <td>{{ level.rating }}</td>
+                <td>{{ level.major_stage }}.{{ level.minor_stage }}</td>
+                <td>{{ level.difficulty_str }}</td>
+                <td>{{ level.length_str }}</td>
+                <td>{{ level.date_created|date:"M j, Y" }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% include 'browse_nav.html' %}
+{% endblock %}

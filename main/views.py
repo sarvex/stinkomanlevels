@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Sum
 from django.contrib.auth import authenticate, login, logout
+from django.core.paginator import Paginator
 
 from stinkomanlevels.main.models import *
 from stinkomanlevels.main.forms import *
@@ -135,7 +136,64 @@ def confirm(request):
 
 def browse(request):
     activeUser(request)
-    return render_to_response('browse.html', locals(), context_instance=RequestContext(request))
+
+    order = request.GET.get('order', 'ASC')
+    if order == 'DESC':
+        sign = '-'
+    else:
+        sign = ''
+        order = 'ASC'
+
+    next_sort = {
+        'rating': 'DESC',
+        'author': 'ASC',
+        'stage': 'ASC',
+        'difficulty': 'ASC',
+        'length': 'ASC',
+        'datecreated': 'DESC',
+        'title': 'ASC',
+    }
+    column = request.GET.get('sort', 'title')
+    if not next_sort.has_key(column):
+        colmun = 'title'
+
+    if sign != '-' and next_sort[column] == 'ASC':
+        next_sort[column] = 'DESC'
+    elif sign == '-' and next_sort[column] == 'DESC':
+        next_sort[column] = 'ASC'
+
+    levels = Level.objects
+    if column == 'rating':
+        levels = levels.annotate(rating_value=Sum("ratings__value")).order_by("%srating_value" % sign)
+    elif column == 'author':
+        levels = levels.order_by('%sauthor' % sign, '%stitle' % sign)
+    elif column == 'stage':
+        levels = levels.order_by('%smajor_stage' % sign, '%sminor_stage' % sign)
+    elif column == 'difficulty':
+        levels = levels.order_by('%sdifficulty' % sign, '%slength' % sign)
+    elif column == 'length':
+        levels = levels.order_by('%slength' % sign, '%sdifficulty' % sign)
+    elif column == 'datecreated':
+        levels = levels.order_by('%sdate_created' % sign)
+    else: # title
+        levels = levels.order_by('%stitle' % sign)
+
+    try:
+        page = int(request.GET.get('page', 1))
+    except ValueError:
+        page = 1
+
+    paginator = Paginator(levels, 20)
+    levels = paginator.page(page)
+
+    results = {
+        'levels': levels,
+        'next_sort': next_sort,
+        'sort': column,
+        'order': order,
+    }
+
+    return render_to_response('browse.html', results, context_instance=RequestContext(request))
 
 def create_hash(length):
     """

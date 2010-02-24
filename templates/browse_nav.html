@@ -1,0 +1,13 @@
+<div class="pagination">
+    <span class="step-links">
+        {% if levels.has_previous %}
+            <a href="?sort={{ sort }}&amp;order={{ order }}&amp;page={{ levels.previous_page_number }}">previous</a>
+        {% endif %}
+        <span class="current">
+            Page {{ levels.number }} of {{ levels.paginator.num_pages }}.
+        </span>
+        {% if levels.has_next %}
+            <a href="?sort={{ sort }}&amp;order={{ order }}&amp;page={{ levels.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
