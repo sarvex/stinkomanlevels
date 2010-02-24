@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
@@ -6,6 +7,9 @@ from django.contrib.auth import authenticate, login, logout
 
 from stinkomanlevels.main.models import *
 from stinkomanlevels.main.forms import *
+
+import string
+import random
 
 def activeUser(request):
     """
@@ -36,8 +40,45 @@ def submit(request):
     return render_to_response('submit.html', locals(), context_instance=RequestContext(request))
 
 def register(request):
-    activeUser(request)
-    return render_to_response('register.html', locals(), context_instance=RequestContext(request))
+    err_msg = ''
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            # create the user
+            user = User.objects.create_user(form.cleaned_data.get('username'),
+                form.cleaned_data.get('email'),
+                form.cleaned_data.get('password'))
+            user.save()
+
+            # create a profile
+            profile = Profile()
+            profile.user = user
+            profile.activated = False
+            profile.activate_code = create_hash(32)
+            profile.logon_count = 0
+            profile.save()
+
+            # send an activation email
+            subject = "Account Confirmation - Custom Stinkoman Levels"
+            message = """
+==========Custom Stinkoman Levels Account Confirmation==========
+
+Please enter this link into your browser to confirm your account:
+http://stinkoman.superjoesoftware.com/confirm/%s/%s
+
+Thank you!
+
+-Superjoe Software Admin
+http://www.superjoesoftware.com
+""" % (user.username, profile.activate_code)
+            from_email = 'admin@superjoesoftware.com'
+            to_email = user.email
+            send_mail(subject, message, from_email, [to_email], fail_silently=True)
+
+            return HttpResponseRedirect("/register/pending/")
+    else:
+        form = RegisterForm()
+    return render_to_response('register.html', {'form': form, 'err_msg': err_msg }, context_instance=RequestContext(request))
 
 def rate(request):
     activeUser(request)
@@ -96,3 +137,12 @@ def browse(request):
     activeUser(request)
     return render_to_response('browse.html', locals(), context_instance=RequestContext(request))
 
+def create_hash(length):
+    """
+    returns a string of length length with random alphanumeric characters
+    """
+    chars = string.letters + string.digits
+    code = ""
+    for i in range(length):
+        code += chars[random.randint(0, len(chars)-1)]
+    return code

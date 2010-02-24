@@ -18,7 +18,9 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
 
-    # legacy media
+    # legacy urls
+    (r'^confirm\.cgi\?name=(?P<name>.+)&code=(?P<code>.+)$',
+        redirect_to, {'url': "/confirm/%(name)s/%(code)s"}),
     (r'^img/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"img/%(id)s"}),
     (r'^oldlevels/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"legacy-levels/%(id)s"}),
     (r'^levels/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"levels/%(id)s"}),
@@ -39,7 +41,6 @@ urlpatterns = patterns('',
     # views
     (r'^$', 'stinkomanlevels.main.views.home'),
     (r'^browse/$', 'stinkomanlevels.main.views.browse'),
-    (r'^confirm/$', 'stinkomanlevels.main.views.confirm'),
     (r'^dashboard/$', 'stinkomanlevels.main.views.dashboard'),
     (r'^download/$', direct_to_template, {'template': 'download.html'}),
     (r'^edit/(.+)/$', 'stinkomanlevels.main.views.edit'),
@@ -49,9 +50,11 @@ urlpatterns = patterns('',
     (r'^play/(.+)/$', 'stinkomanlevels.main.views.play'),
     (r'^post/$', 'stinkomanlevels.main.views.post'),
     (r'^rate/$', 'stinkomanlevels.main.views.rate'),
-    (r'^register/$', 'stinkomanlevels.main.views.register'),
     (r'^submit/$', 'stinkomanlevels.main.views.submit'),
     (r'^upload/$', 'stinkomanlevels.main.views.upload'),
     (r'^user/(.+)/$', 'stinkomanlevels.main.views.user'),
+    (r'^register/$', 'stinkomanlevels.main.views.register'),
+    (r'^register/pending/$', direct_to_template, {'template': 'pending.html'}),
+    (r'^confirm/(.+)$', 'stinkomanlevels.main.views.confirm'),
 )
 

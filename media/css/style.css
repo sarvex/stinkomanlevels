@@ -195,6 +195,17 @@ th {
 	text-align: center;
 }
 
+.form-table th {
+    text-align: right;
+    font-weight: normal;
+    background: #ffffff;
+    color: #000000;
+}
+
+table.form-table {
+    border: none;
+}
+
 div#content th a, div#content th a:link, div#content th a:visited {
 	color: #FFFFFF;
 	
