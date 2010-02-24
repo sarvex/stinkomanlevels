@@ -51,7 +51,7 @@ for row in csv.reader(open("migrating/levels.csv", "rb"), 'phpmyadmin'):
     level.major_stage = int(majorstage)
     level.minor_stage = int(minorstage)
     level.difficulty = int(difficulty) + 2
-    level.length = int(length) + 2
+    level.length = int(length) + 1
     level.author = User.objects.get(id=django_user[author]).get_profile()
     level.description = comments
     level.file = file

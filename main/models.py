@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-VERY_EASY, EASY, MEDIUM, HARD, VERY_HARD = range(5)
-VERY_SHORT, SHORT, MEDIUM, LONG, VERY_LONG = range(5)
+D_VERY_EASY, D_EASY, D_MEDIUM, D_HARD, D_VERY_HARD = range(5)
+L_SHORT, L_MEDIUM, L_LONG = range(3)
 THUMBS_DOWN, NO_RATING, THUMBS_UP = (-1, 0, 1)
 
 class Profile(models.Model):
@@ -33,35 +33,36 @@ class Comment(models.Model):
 
 class Level(models.Model):
     DIFFICULTY_CHOICES = (
-        (VERY_EASY, 'Very Easy'),
-        (EASY, 'Easy'),
-        (MEDIUM, 'Medium'),
-        (HARD, 'Hard'),
-        (VERY_HARD, 'Very Hard'),
+        (D_VERY_EASY, 'Very Easy'),
+        (D_EASY, 'Easy'),
+        (D_MEDIUM, 'Medium'),
+        (D_HARD, 'Hard'),
+        (D_VERY_HARD, 'Very Hard'),
     )
     LENGTH_CHOICES = (
-        (VERY_SHORT, 'Very Short'),
-        (SHORT, 'Short'),
-        (MEDIUM, 'Medium'),
-        (LONG, 'Long'),
-        (VERY_LONG, 'Very Long'),
+        (L_SHORT, 'Short'),
+        (L_MEDIUM, 'Medium'),
+        (L_LONG, 'Long'),
     )
     title = models.CharField(max_length=256, unique=True)
     major_stage = models.IntegerField()
     minor_stage = models.IntegerField()
-    difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES, default=MEDIUM)
-    length = models.IntegerField(choices=LENGTH_CHOICES, default=MEDIUM)
+    difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES, default=D_MEDIUM)
+    length = models.IntegerField(choices=LENGTH_CHOICES, default=L_MEDIUM)
     author = models.ForeignKey(Profile)
     description = models.TextField(blank=True)
     file = models.CharField(max_length=500)
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
-    last_played = models.DateTimeField()
+    last_played = models.DateTimeField(null=True, blank=True)
     ratings = models.ManyToManyField(Rating)
     comments = models.ManyToManyField(Comment)
 
     def rating(self):
-        return self.ratings.aggregate(models.Sum('value'))['value__sum']
+        if self.ratings.count() == 0:
+            return 0
+        else:
+            return self.ratings.aggregate(models.Sum('value'))['value__sum']
 
     def difficulty_str(self):
         return dict(Level.DIFFICULTY_CHOICES)[self.difficulty]

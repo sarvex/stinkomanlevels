@@ -44,10 +44,67 @@ def upload(request):
 
 def submit(request):
     activeUser(request)
+    if request.method == 'POST':
+        form = UploadLevelForm(request.POST, request.FILES)
+        if form.is_valid() and request.user.is_authenticated():
+            # create the new level
+            level = Level()
+            level.title = form.cleaned_data.get('title')
+            level.major_stage, level.minor_stage = form.cleaned_data.get('stage').split('.')
+            level.difficulty = form.cleaned_data.get('difficulty')
+            level.length = form.cleaned_data.get('length')
+            level.author = request.user.get_profile()
+            level.description = form.cleaned_data.get('description')
+            level.file = unique_level_path(level.title)
+
+            out_path = os.path.join(MEDIA_ROOT, "levels", level.file)
+            if form.cleaned_data.get('xml_file') is not None:
+                # upload the file to that file
+                handle_uploaded_file(request.FILES['xml_file'], out_path)
+            elif form.cleaned_data.get('xml_code') is not None:
+                # write the xml code to that file
+                open(out_path, "w").write(form.cleaned_data.get('xml_code'))
+
+            level.save()
+
+            return HttpResponseRedirect("/play/%s/" % level.title)
+    else:
+        form = UploadLevelForm()
     return render_to_response('submit.html', locals(), context_instance=RequestContext(request))
 
+def handle_uploaded_file(f, new_name):
+	dest = open(new_name, 'wb+')
+	for chunk in f.chunks():
+		dest.write(chunk)
+	dest.close()
+    
+
+def unique_level_path(title):
+    """
+    returns a unique file title for the level to have guaranteeing that
+    it won't collide with another file in the levels media folder
+    """
+    allowed = string.letters + string.digits + "_-."
+    clean = ""
+    for c in title:
+        if c in allowed:
+            clean += c
+        else:
+            clean += "_"
+
+    ext = ".xml"
+    if os.path.exists(os.path.join(MEDIA_ROOT, "levels", clean + ext)):
+        # use digits
+        suffix = 2
+        while os.path.exists(os.path.join(MEDIA_ROOT, "levels", clean + str(suffix) + ext)):
+            suffix += 1
+        unique = clean + str(suffix) + ext
+    else:
+        unique = clean + ext
+
+    return unique
+
 def register(request):
-    err_msg = ''
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -75,7 +132,7 @@ def register(request):
             return HttpResponseRedirect("/register/pending/")
     else:
         form = RegisterForm()
-    return render_to_response('register.html', {'form': form, 'err_msg': err_msg }, context_instance=RequestContext(request))
+    return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))
 
 @login_required
 def rate(request, level_title, value):
