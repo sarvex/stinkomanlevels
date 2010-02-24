@@ -131,3 +131,6 @@ for row in csv.reader(open("migrating/userleveldata.csv", "rb"), 'phpmyadmin'):
     level.ratings.add(rating)
     level.save()
 
+# backup the fresh database
+os.system('cp db real_db')
+

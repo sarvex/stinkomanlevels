@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 
     # legacy urls
-    (r'^confirm.cgi$', 'stinkomanlevels.main.views.confirm'),
+    (r'^confirm.cgi$', 'stinkomanlevels.main.views.confirm_legacy'),
 
     (r'^img/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"img/%(id)s"}),
     (r'^oldlevels/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"legacy-levels/%(id)s"}),
@@ -55,6 +55,6 @@ urlpatterns = patterns('',
     (r'^user/(.+)/$', 'stinkomanlevels.main.views.user'),
     (r'^register/$', 'stinkomanlevels.main.views.register'),
     (r'^register/pending/$', direct_to_template, {'template': 'pending.html'}),
-    (r'^confirm/(.+)$', 'stinkomanlevels.main.views.confirm'),
+    (r'^confirm/(.+)/(.+)$', 'stinkomanlevels.main.views.confirm'),
 )
 

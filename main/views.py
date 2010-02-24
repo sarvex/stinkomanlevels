@@ -108,14 +108,14 @@ def user_login(request):
         if form.is_valid():
             user = authenticate(username=form.cleaned_data.get('username', ''), password=form.cleaned_data.get('password', ''))
             if user is not None:
-                if user.is_active:
+                if user.is_active and user.get_profile().activated:
                     login(request, user)
                     url = '/'
                     if request.GET.has_key('next'):
                         url = request.GET['next']
                     return HttpResponseRedirect(url)
                 else:
-                    err_msg = 'Your account is disabled.'
+                    err_msg = 'Your account is not activated.'
             else:
                 err_msg = 'Invalid login.'
     else:
@@ -130,9 +130,32 @@ def dashboard(request):
     activeUser(request)
     return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))
 
-def confirm(request):
-    activeUser(request)
-    return render_to_response('confirm.html', locals(), context_instance=RequestContext(request))
+def confirm_legacy(request):
+    username = request.GET.get('name')
+    code = request.GET.get('code')
+    return confirm(request, username, code)
+
+def confirm(request, username, code):
+    try:
+        user = User.objects.get(username=username)
+    except:
+        err_msg = "Invalid username. Your account may have expired. You can try registering again."
+        return render_to_response('confirm_failure.html', locals(), context_instance=RequestContext(request))
+
+    profile = user.get_profile()
+    real_code = profile.activate_code
+
+    if real_code == code:
+        # activate the account
+        user.is_active = True
+        user.save()
+        profile.activated = True
+        profile.save()
+        return render_to_response('confirm_success.html', locals(), context_instance=RequestContext(request))
+    else:
+        err_msg = "Invalid activation code. Nice try!"
+        return render_to_response('confirm_failure.html', locals(), context_instance=RequestContext(request))
+
 
 def browse(request):
     activeUser(request)

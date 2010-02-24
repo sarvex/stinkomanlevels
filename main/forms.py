@@ -36,7 +36,7 @@ class RegisterForm(forms.Form):
         email = self.cleaned_data['email']
 
         if User.objects.filter(email=email).count() > 0:
-            raise forms.ValidationError("This email address already exists." % username)
+            raise forms.ValidationError("This email address already exists.")
 
-        return username
+        return email
    
