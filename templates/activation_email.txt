@@ -1,0 +1,9 @@
+==========Custom Stinkoman Levels Account Confirmation==========
+
+Please enter this link into your browser to confirm your account:
+http://stinkoman.superjoesoftware.com/confirm/{{ username }}/{{ code }}
+
+Thank you!
+
+-Superjoe Software Admin
+http://www.superjoesoftware.com

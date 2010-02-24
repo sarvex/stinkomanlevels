@@ -1,0 +1,10 @@
+{% if user.is_authenticated %}
+    {% ifequal user_rating 0 %}   
+        Rate this level: <a href="javascript:rate(-1);">-1</a>
+        <a href="javascript:rate(1);">+1</a>
+    {% else %}
+        You rated this level {{ user_rating }}. <a href="javascript:rate(0);">Undo</a>
+    {% endifequal %}
+{% else %}
+    <a href="/login/?next=/play/{{ level.title }}/">Log in</a> to rate levels.</a>
+{% endif %}

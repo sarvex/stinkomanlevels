@@ -52,7 +52,7 @@ class Level(models.Model):
     difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES, default=MEDIUM)
     length = models.IntegerField(choices=LENGTH_CHOICES, default=MEDIUM)
     author = models.ForeignKey(Profile)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     file = models.CharField(max_length=500)
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)

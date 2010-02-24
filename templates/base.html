@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{% block css %}{{ MEDIA_URL }}css/style.css{% endblock %}" />
 <link rel="shortcut icon" href="{{ MEDIA_URL }}favicon.ico" type="image/x-icon" />
 <script type="text/javascript" language="JavaScript" src="{{ MEDIA_URL }}js/common.js"></script>
+{% block extra_header %}{% endblock %}
 </head>
 <body>
 <div id="wrapper">

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block extra_header %}
+<script type="text/javascript">
+function rate(score) {
+    var xmlHttp = newAjax();
+
+    xmlHttp.onreadystatechange = function(){
+        if( xmlHttp.readyState == 4){
+            objById("rate").innerHTML = xmlHttp.responseText;
+        }
+    }
+
+    xmlHttp.open("GET", "/rate/{{ level.title }}/"+escape(score)+"/", true);
+    xmlHttp.send(null);
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="gameinfo">
+    {% if user.is_authenticated %}
+        {% ifequal user.get_profile level.author %}
+            <span class="edit"><a href="/edit/{{ level.title }}/">(edit)</a></span>
+        {% endifequal %}
+    {% endif %}
+    <h3>Level Info</h3>
+    Author: <a href="/user/{{ level.author }}/">{{ level.author }}</a><br />
+    Length: {{ level.length }} <br />
+    Difficulty: {{ level.difficulty }} <br />
+    Rating: {{ level.rating }} <br />
+    <br />
+    <div id="gamedesc">
+    {% if level.description %}
+        {{ level.description }}
+    {% else %}
+        The author has not entered any notes.
+    {% endif %}
+    </div>
+    <p>
+    {% ifequal level.minor_stage 3 %}
+        This is a boss level. Press &quot;Continute&quot; and select
+        <u>Stage {{ level.major_stage }}.{{ level.minor_stage }}</u>
+        to play this level.
+    {% else %}
+        This level is meant to be played on
+        <u>Stage {{ level.major_stage }}.{{ level.minor_stage }}</u>;
+        make sure you press &quot;Continute&quot; and select that stage!
+    {% endifequal %}
+    </p>
+</div>
+
+<div id="game">
+    <h2><span class="supertext"><a href="{{ MEDIA_URL }}levels/{{ level.file }}">Download ({{ level_size|filesizeformat }})</a></span>{{ level.title }}</h2>
+   <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="550" height="400">
+   <param name="movie" value="stinkogame.swf">
+   <param name="quality" value="low">
+   <embed src="stinkogame.swf" quality="low" width="550" height="400" name="video" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">
+   </embed>
+   </object>
+   <div id="rate">
+   {% include 'rate_response.html' %}
+   </div>
+</div>
+
+<div id="comments">
+    <h3>Level Reviews</h3>
+    <div id="reviews">
+    {% if level.comments.all %}
+        {% for comment in level.comments.all %}
+        <div class="{% cycle 'odd' 'even' %}">
+        <h4>{{ comment.date_created|date:"M j, Y" }} by <a href="/user/{{ comment.owner }}/">{{ comment.owner }}</a></h4>
+        {{ comment.text }}
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No one has posted a review for this level yet.</p>
+    {% endif %}
+    </div>
+    <h3>Post a Review</h3>
+    <div id="reviewform">
+    {% if user.is_authenticated %}
+        <form action="." method="post">
+            {{ form.content }} <br />
+            <input type="submit" value="Post" />
+        </form>
+    {% else %}
+        <a href="/login/?next=/play/{{ level.title }}/">Log in</a> to post a review.</a>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

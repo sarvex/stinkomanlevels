@@ -1,16 +1,22 @@
 from django.core.mail import send_mail
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+from django.template.loader import get_template
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Sum
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 
 from stinkomanlevels.main.models import *
 from stinkomanlevels.main.forms import *
 
+from stinkomanlevels.settings import MEDIA_URL, MEDIA_ROOT
+
 import string
 import random
+import datetime
+import os
 
 def activeUser(request):
     """
@@ -61,17 +67,7 @@ def register(request):
 
             # send an activation email
             subject = "Account Confirmation - Custom Stinkoman Levels"
-            message = """
-==========Custom Stinkoman Levels Account Confirmation==========
-
-Please enter this link into your browser to confirm your account:
-http://stinkoman.superjoesoftware.com/confirm/%s/%s
-
-Thank you!
-
--Superjoe Software Admin
-http://www.superjoesoftware.com
-""" % (user.username, profile.activate_code)
+            message = get_template('activation_email.txt').render(Context({ 'username': user.username, 'code': profile.activate_code}))
             from_email = 'admin@superjoesoftware.com'
             to_email = user.email
             send_mail(subject, message, from_email, [to_email], fail_silently=True)
@@ -81,17 +77,91 @@ http://www.superjoesoftware.com
         form = RegisterForm()
     return render_to_response('register.html', {'form': form, 'err_msg': err_msg }, context_instance=RequestContext(request))
 
-def rate(request):
+@login_required
+def rate(request, level_title, value):
     activeUser(request)
-    return render_to_response('rate.html', locals(), context_instance=RequestContext(request))
+    value = int(value)
+    
+    level = get_object_or_404(Level, title=level_title)
+    profile = request.user.get_profile()
+    user_ratings = level.ratings.filter(owner=profile)
+
+    if user_ratings.count() > 0:
+        # user has already rated - change their vote
+        rating = user_ratings[0]
+        rating.value = value
+        rating.save()
+    else: 
+        # create a new rating
+        rating = Rating()
+        rating.owner = profile
+        rating.value = value
+        rating.save()
+
+        level.ratings.add(rating)
+        level.save()
+
+    results = {
+        'user': request.user,
+        'user_rating': rating.value,
+    }
+
+    return render_to_response('rate_response.html', results, context_instance=RequestContext(request))
 
 def post(request):
     activeUser(request)
     return render_to_response('post.html', locals(), context_instance=RequestContext(request))
 
-def play(request):
+def play(request, level_title):
     activeUser(request)
+
+    level = get_object_or_404(Level, title=level_title)
+
+    if request.method == 'POST':
+        form = NewCommentForm(request.POST)
+        if form.is_valid() and request.user.is_authenticated():
+            comment = Comment()
+            comment.owner = request.user.get_profile()
+            comment.text = form.cleaned_data.get('content')
+            comment.save()
+
+            level.comments.add(comment)
+            level.save()
+
+            return HttpResponseRedirect(".")
+    else:
+        form = NewCommentForm()
+
+    level.last_played = datetime.datetime.today()
+    level.save()
+
+    level_size = os.path.getsize(os.path.join(MEDIA_ROOT, "levels", level.file))
+
+    if request.user.is_authenticated():
+        user_rating = level.ratings.filter(owner=request.user.get_profile())
+        if user_rating.count() > 0:
+            user_rating = user_rating[0].value
+        else:
+            user_rating = 0
+
     return render_to_response('play.html', locals(), context_instance=RequestContext(request))
+
+def level_xml(request, level_title, major_stage, minor_stage):
+    major_stage = int(major_stage)
+    minor_stage = int(minor_stage)
+
+    level = get_object_or_404(Level, title=level_title)
+
+    if level.major_stage == major_stage and level.minor_stage == minor_stage:
+        # give them the level file
+        return HttpResponseRedirect("%slevels/%s" % (MEDIA_URL, level.file))
+    elif level.minor_stage == 3 and level.major_stage == major_stage and minor_stage == 2:
+        # it's a boss fight, give them an instant win level so they can skip
+        # to the boss
+        return HttpResponseRedirect(MEDIA_URL+"level-templates/instant_win.xml")
+    else:
+        # not allowed to play this level
+        return HttpResponseRedirect(MEDIA_URL+"level-templates/instant_death.xml")
 
 def namecheck(request):
     activeUser(request)
@@ -99,7 +169,7 @@ def namecheck(request):
 
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 def user_login(request):
     err_msg = ''
@@ -110,16 +180,13 @@ def user_login(request):
             if user is not None:
                 if user.is_active and user.get_profile().activated:
                     login(request, user)
-                    url = '/'
-                    if request.GET.has_key('next'):
-                        url = request.GET['next']
-                    return HttpResponseRedirect(url)
+                    return HttpResponseRedirect(form.cleaned_data.get('next_url'))
                 else:
                     err_msg = 'Your account is not activated.'
             else:
                 err_msg = 'Invalid login.'
     else:
-        form = LoginForm()
+        form = LoginForm(initial={'next_url': request.GET.get('next', '/')})
     return render_to_response('login.html', {'form': form, 'err_msg': err_msg }, context_instance=RequestContext(request))
 
 def edit(request):
