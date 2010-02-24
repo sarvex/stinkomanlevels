@@ -1,0 +1,19 @@
+<div class="tablesection">
+    <div class="tableblock">
+        <h3>{{ heading }}</h3>
+        <table>
+            <tr>
+                <th>Level</th>
+                <th>Creator</th>
+                <th>Rating</th>
+            </tr>
+            {% for level in levels %}
+                <tr class="{% cycle 'even' 'odd' %}">
+                    <td><a href="/play/{{ level.title }}/">{{ level.title }}</a></td>
+                    <td><a href="/user/{{ level.author }}/">{{ level.author }}</a></td>
+                    <td>{{ level.rating }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

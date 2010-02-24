@@ -115,7 +115,9 @@ for row in csv.reader(open("migrating/userleveldata.csv", "rb"), 'phpmyadmin'):
 
     rating = Rating()
     rating.owner = User.objects.get(id=django_user[user]).get_profile()
-    rating.value = rate_value
+    rating.value = int(rate_value) - 1
+    if rating.value == -2:
+        rating.value = 0
     rating.save()
 
     level = Level.objects.get(id=django_level[level])

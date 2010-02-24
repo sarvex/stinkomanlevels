@@ -9,26 +9,19 @@
     </p>
     <h2>Your old stuff</h2>
     <p>
-    If you were a part of this way back when, I still have your levels. <a href="/leg">Find your stuff</a> and upload it again please.
+    If you were a part of this way back when, I still have your levels. <a href="{{ MEDIA_URL }}legacy-levels">Find your stuff</a> and upload it again please.
     </p>
     
-    <div class="tablesection">
-        <div class="tableblock">
-            <h3>New Levels</h3>
-            <table>
-                <tr> <th></th> </tr>
-            </table>
-                
-        </div>
-    </div>
+    {% with new_levels as levels %}
+    {% with "New Levels" as heading %}
+        {% include 'level_table.html' %}
+    {% endwith %}
+    {% endwith %}
 
-    <div class="tablesection">
-        <div class="tableblock">
-            <h3>Top Levels</h3>
-            <table>
-                <tr> <th></th> </tr>
-            </table>
-        </div>
-    </div>
+    {% with top_levels as levels %}
+    {% with "Top Levels" as heading %}
+        {% include 'level_table.html' %}
+    {% endwith %}
+    {% endwith %}
 
 {% endblock %}

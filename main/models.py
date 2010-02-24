@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 VERY_EASY, EASY, MEDIUM, HARD, VERY_HARD = range(5)
 VERY_SHORT, SHORT, MEDIUM, LONG, VERY_LONG = range(5)
-THUMBS_UP, THUMBS_DOWN = (1, -1)
+THUMBS_DOWN, NO_RATING, THUMBS_UP = (-1, 0, 1)
 
 class Profile(models.Model):
     user = models.ForeignKey(User, unique=True)
@@ -13,13 +13,17 @@ class Profile(models.Model):
     logon_count = models.IntegerField()
     comments = models.ManyToManyField('Comment')
 
+    def __unicode__(self):
+        return self.user.username
+
 class Rating(models.Model):
     RATING_CHOICES = (
         (THUMBS_UP, 'Thumbs Up'),
+        (NO_RATING, 'No Rating'),
         (THUMBS_DOWN, 'Thumbs Down'),
     )
     owner = models.ForeignKey(Profile)
-    value = models.IntegerField(choices=RATING_CHOICES)
+    value = models.IntegerField(choices=RATING_CHOICES, default=NO_RATING)
 
 class Comment(models.Model):
     owner = models.ForeignKey(Profile)
@@ -55,4 +59,7 @@ class Level(models.Model):
     last_played = models.DateTimeField()
     ratings = models.ManyToManyField(Rating)
     comments = models.ManyToManyField(Comment)
+
+    def rating(self):
+        return self.ratings.aggregate(models.Sum('value'))['value__sum']
 
