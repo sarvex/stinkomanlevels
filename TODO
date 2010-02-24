@@ -1,7 +1,7 @@
 * Edit
 * User page
 * Dashboard
-* update the title bar for each template
+* pagination for level reviews
 - hack the flash
 	* button to toggle sound - stored in user's profile
 	* detects when a user beats a level
