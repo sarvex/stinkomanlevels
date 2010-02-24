@@ -24,7 +24,7 @@ a, a:link, a:visited {
 }
 
 div#content  {
-	background: #80C9FF;
+	background: #ffffff;
 	color: #000000;
 	
 	clear: both;
@@ -50,7 +50,7 @@ div#menu {
 #menu li {
 	display: inline;
 	
-	background: url(/style/buttonbg.gif) top left no-repeat;
+	background: url(../img/buttonbg.gif) top left no-repeat;
 	
 	padding: 6px 6px 4px 12px;
 	margin: 4px;

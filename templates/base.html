@@ -20,19 +20,29 @@
             <li><a href="/download/">Download</a></li>
             </ul>
         </div>
+        {% if user.is_authenticated %}
         <div id="login">
             <ul>
-            <li><a href="/user/superjoe">superjoe</a></li>
+            <li><a href="/user/{{ user.username }}/">{{ user.username }}</a></li>
             <li><a href="/dashboard/">Dashboard</a></li>
-            <li><a href="javascript:logout();">Log out</a></li>
+            <li><a href="/logout/">Log out</a></li>
             </ul>
         </div>
+        {% else %}
+        <div id="login">
+            <ul>
+            <li><a href="/login/">Log in</a></li>
+            <li><a href="/register/">Register</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
     </div>
     <div id="content">
         {% block content %}
         {% endblock %}
-    </div>
     <div class="clear"><br /></div>
+    </div>
 
     <div id="copy">
         <div>
