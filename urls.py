@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    (r'^admin/$', include(admin.site.urls)),
+    (r'^admin/', include(admin.site.urls)),
 
     # legacy media
     (r'^img/(?P<id>.+)$', 'redirect_to', {'url': MEDIA_URL+"img/%(id)s"}),
@@ -52,6 +52,6 @@ urlpatterns = patterns('',
     (r'^register/$', 'stinkomanlevels.main.views.register'),
     (r'^submit/$', 'stinkomanlevels.main.views.submit'),
     (r'^upload/$', 'stinkomanlevels.main.views.upload'),
-    (r'^user/$', 'stinkomanlevels.main.views.user'),
+    (r'^user/(.+)/$', 'stinkomanlevels.main.views.user'),
 )
 

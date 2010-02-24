@@ -114,6 +114,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 	'django.core.context_processors.i18n',
 	'django.core.context_processors.media',
     'django.core.context_processors.request',
+    'stinkomanlevels.context.global_values',
 )
 
 INSTALLED_APPS = (
@@ -124,7 +125,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.markup',
     'stinkomanlevels.main',
-    'registration',
 )
 
 LOGIN_URL = "/login/"

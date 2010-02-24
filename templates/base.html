@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>{% block title %}Custom Stinkoman Levels{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{% block css %}{{ MEDIA_URL }}css/style.css{% endblock %}" />
+<link rel="shortcut icon" href="{{ MEDIA_URL }}favicon.ico" type="image/x-icon" />
+<script type="text/javascript" language="JavaScript" src="{{ MEDIA_URL }}js/common.js"></script>
+</head>
+<body>
+<div id="wrapper">
+    <div id="menu">
+        <h1>Custom Stinkoman Levels</h1>
+        <div id="nav">
+            <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/browse/">Browse</a></li>
+
+            <li><a href="/submit/">Submit</a></li>
+            <li><a href="/download/">Download</a></li>
+            </ul>
+        </div>
+        <div id="login">
+            <ul>
+            <li><a href="/user/superjoe">superjoe</a></li>
+            <li><a href="/dashboard/">Dashboard</a></li>
+            <li><a href="javascript:logout();">Log out</a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <div class="clear"><br /></div>
+
+    <div id="copy">
+        <div>
+            Current users online: 
+            {% for profile in online_profiles %}
+                <a href="/user/{{ profile.user.username }}">{{ profile.user.username }}</a>
+            {% endfor %}
+        </div>
+        <br />
+        <div>
+            &copy; 2008 <a href="http://www.superjoesoftware.com/">Superjoe Software</a>
+        </div>
+        <div>
+            Stinkoman is owned and copyrighted by <a href="http://www.homestarrunner.com">Homestar Runner</a>. See the <a href="http://www.homestarrunner.com/stinkogame/v7/stinkogame.html">original game</a>.
+        </div>
+    </div>
+</div>
+</body>
+</html> 
