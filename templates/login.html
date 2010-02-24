@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Log in - {{ block.super }}{% endblock %}
+
+{% block content %}
+    {% if err_msg %}
+    <p>{{ err_msg }}</p>
+    {% endif %}
+    <form action="." method="post">
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Sign in" />
+    </form>
+{% endblock %}
