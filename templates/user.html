@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile.user.username }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h2>{{ profile.user.username }}</h2>
+        <p>
+            Been a member since: {{ profile.user.date_joined|date:"M j, Y" }} <br />
+            Last login: {{ profile.user.last_login|date:"M j, Y" }} <br />
+            Points: {{ profile.points }} <br />
+        </p>
+    <h3>{{ profile.user.username }}'s Levels</h3>
+    {% if user_levels %}
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Rating</th>
+            <th>Stage</th>
+            <th>Difficulty</th>
+            <th>Length</th>
+            <th>Date Added</th>
+        </tr>
+        {% for level in user_levels %}
+        <tr>
+            <td><a href="/play/{{ level.title}}/">{{ level.title }}</a></td>
+            <td>{{ level.rating }}</td>
+            <td>{{ level.major_stage }}.{{ level.minor_stage }}</td>
+            <td>{{ level.difficulty_str }}</td>
+            <td>{{ level.length_str }}</td>
+            <td>{{ level.date_created|date:"M j, Y" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>{{ profile.user.username }} has not created any levels yet.</p>
+    {% endif %}
+
+    <div id="comments">
+        <h3>Comments</h3>
+        {% if comments %}
+        <div id="reviews">
+            {% for comment in comments %}
+            <div class="{% cycle 'odd' 'even' %}">
+                <h4>{{ comment.date_created|date:"M j, Y" }} by
+                    <a href="/user/{{ comment.owner }}/">{{ comment.owner }}</a>
+                </h4>
+                {{ comment.text }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+        <p>No comments :(</p>
+    {% endif %}
+{% endblock %}

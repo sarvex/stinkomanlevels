@@ -1,6 +1,10 @@
-* User page
-* Dashboard
-* pagination for level reviews
+* reverse reviews and comments and put input box at the top
+* add points next to every user
+* paginate level reviews
+* paginate levels you have not rated
+* paginate reviews of your levels
+* paginate user's levels
+* paginate user comments
 - hack the flash
 	* button to toggle sound - stored in user's profile
 	* detects when a user beats a level

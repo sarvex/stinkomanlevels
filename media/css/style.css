@@ -244,7 +244,11 @@ div#reviews div {
 }
 
 div#reviews div.odd {
-	background: #BFE4FF;
+	background: #E4E4E4;
+}
+
+div#reviews div.even {
+	background: #F4F4F4;
 }
 
 div#copy {

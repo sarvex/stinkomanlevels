@@ -68,8 +68,8 @@ function rate(score) {
 <div id="comments">
     <h3>Level Reviews</h3>
     <div id="reviews">
-    {% if level.comments.all %}
-        {% for comment in level.comments.all %}
+    {% if level_reviews %}
+        {% for comment in level_reviews %}
         <div class="{% cycle 'odd' 'even' %}">
         <h4>{{ comment.date_created|date:"M j, Y" }} by <a href="/user/{{ comment.owner }}/">{{ comment.owner }}</a></h4>
         {{ comment.text }}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h2>Dashboard</h2>
+    <div class="tablesection">
+        <div class="tableblock">
+            <h3>Levels you have not rated:</h3>
+            <table>
+                <tr>
+                    <th>Level</th>
+                    <th>Creator</th>
+                    <th>Date Created</th>
+                </tr>
+                {% for level in unrated_levels %}
+                <tr>
+                    <td><a href="/play/{{ level.title }}/">{{ level.title }}</a></td>
+                    <td><a href="/user/{{ level.author }}/">{{ level.author }}</a></td>
+                    <td>{{ level.date_created|date:"M j, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="clear"></div>
+
+    <h3>Reviews of your levels:</h3>
+    <div id="comments">
+        <div id="reviews">
+            {% if level_reviews %}
+                {% for comment in level_reviews %}
+                    <div class="{% cycle 'odd' 'even' %}">
+                    <h4>{{ comment.date_created|date:"M j, Y" }} by
+                        <a href="/user/{{ comment.owner }}/">{{ comment.owner }}</a> in
+                        <a href="/play/{{ comment.level.title }}/">{{ comment.level.title }}</a></h4>
+                    {{ comment.text }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>
+                No reviews on your levels yet.
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

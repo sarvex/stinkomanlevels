@@ -30,12 +30,19 @@ def home(request):
     activeUser(request)
 
     new_levels = Level.objects.order_by("-date_created")[:10]
-    top_levels = Level.objects.annotate(rating_value=Sum("ratings__value")).order_by('-rating_value')[:10]
+    top_levels = Level.objects.annotate(rating_value=Sum("rating__value")).order_by('-rating_value')[:10]
 
     return render_to_response('home.html', locals(), context_instance=RequestContext(request))
 
-def user(request):
+def user(request, username):
     activeUser(request)
+
+    selected_user = get_object_or_404(User, username=username)
+    profile = selected_user.get_profile()
+
+    user_levels = Level.objects.filter(author=profile)
+    comments = ProfileComment.objects.filter(profile=profile)
+
     return render_to_response('user.html', locals(), context_instance=RequestContext(request))
 
 def upload(request):
@@ -145,7 +152,7 @@ def rate(request, level_title, value):
     
     level = get_object_or_404(Level, title=level_title)
     profile = request.user.get_profile()
-    user_ratings = level.ratings.filter(owner=profile)
+    user_ratings = level.rating_set.filter(owner=profile)
 
     if user_ratings.count() > 0:
         # user has already rated - change their vote
@@ -157,10 +164,8 @@ def rate(request, level_title, value):
         rating = Rating()
         rating.owner = profile
         rating.value = value
+        rating.level = level
         rating.save()
-
-        level.ratings.add(rating)
-        level.save()
 
     results = {
         'user': request.user,
@@ -181,13 +186,11 @@ def play(request, level_title):
     if request.method == 'POST':
         form = NewCommentForm(request.POST)
         if form.is_valid() and request.user.is_authenticated():
-            comment = Comment()
+            comment = LevelComment()
             comment.owner = request.user.get_profile()
             comment.text = form.cleaned_data.get('content')
+            comment.level = level
             comment.save()
-
-            level.comments.add(comment)
-            level.save()
 
             return HttpResponseRedirect(".")
     else:
@@ -198,8 +201,10 @@ def play(request, level_title):
 
     level_size = os.path.getsize(os.path.join(MEDIA_ROOT, "levels", level.file))
 
+    level_reviews = LevelComment.objects.filter(level=level).order_by('date_created')
+
     if request.user.is_authenticated():
-        user_rating = level.ratings.filter(owner=request.user.get_profile())
+        user_rating = level.rating_set.filter(owner=request.user.get_profile())
         if user_rating.count() > 0:
             user_rating = user_rating[0].value
         else:
@@ -292,6 +297,11 @@ def level_path(level):
 @login_required
 def dashboard(request):
     activeUser(request)
+
+    profile = request.user.get_profile()
+    unrated_levels = Level.objects.exclude(rating__owner=profile).order_by('date_created')
+    level_reviews = LevelComment.objects.filter(level__author=profile).order_by('-date_created')
+
     return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))
 
 def confirm_legacy(request):
@@ -351,7 +361,7 @@ def browse(request):
 
     levels = Level.objects
     if column == 'rating':
-        levels = levels.annotate(rating_value=Sum("ratings__value")).order_by("%srating_value" % sign)
+        levels = levels.annotate(rating_value=Sum("rating__value")).order_by("%srating_value" % sign)
     elif column == 'author':
         levels = levels.order_by('%sauthor' % sign, '%stitle' % sign)
     elif column == 'stage':

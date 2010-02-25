@@ -26,6 +26,8 @@ for row in csv.reader(open("migrating/users.csv", "rb"), 'phpmyadmin'):
     user = User.objects.create_user(screenname, email, password)
     user.save()
     user.date_joined = registerdate
+    if lastlogin != '0000-00-00 00:00:00':
+        user.last_login = lastlogin
     user.save()
 
     django_user[screenname] = user.id
@@ -74,17 +76,14 @@ for row in csv.reader(open("migrating/levelcomments.csv", "rb"), 'phpmyadmin'):
 
     print "adding level comment " + content[:20]
 
-    comment = Comment()
+    comment = LevelComment()
     comment.owner = User.objects.get(id=django_user[author]).get_profile()
     comment.text = content
+    comment.level = Level.objects.get(id=django_level[level])
     comment.save()
 
     comment.date_created = postdate
     comment.save()
-
-    level = Level.objects.get(id=django_level[level])
-    level.comments.add(comment)
-    level.save()
 
 # load user comments and add them to the database
 for row in csv.reader(open("migrating/usercomments.csv", "rb"), 'phpmyadmin'):
@@ -97,17 +96,14 @@ for row in csv.reader(open("migrating/usercomments.csv", "rb"), 'phpmyadmin'):
 
     print "adding user comment " + content[:20]
 
-    comment = Comment()
+    comment = ProfileComment()
     comment.owner = User.objects.get(id=django_user[author]).get_profile()
     comment.text = content
+    comment.profile = User.objects.get(id=django_user[user]).get_profile()
     comment.save()
 
     comment.date_created = postdate
     comment.save()
-
-    profile = User.objects.get(id=django_user[user]).get_profile()
-    profile.comments.add(comment)
-    profile.save()
 
 # load ratings and add them to the database
 for row in csv.reader(open("migrating/userleveldata.csv", "rb"), 'phpmyadmin'):
@@ -125,11 +121,8 @@ for row in csv.reader(open("migrating/userleveldata.csv", "rb"), 'phpmyadmin'):
     rating.value = int(rate_value) - 1
     if rating.value == -2:
         rating.value = 0
+    rating.level = Level.objects.get(id=django_level[level])
     rating.save()
-
-    level = Level.objects.get(id=django_level[level])
-    level.ratings.add(rating)
-    level.save()
 
 # backup the fresh database
 os.system('cp db real_db')

@@ -11,10 +11,20 @@ class Profile(models.Model):
     activate_code = models.CharField(max_length=256)
     date_activity = models.DateTimeField(auto_now=True)
     logon_count = models.IntegerField()
-    comments = models.ManyToManyField('Comment')
 
     def __unicode__(self):
         return self.user.username
+
+    def points(self):
+        user_level_ratings = Rating.objects.filter(level__author=self)
+        if user_level_ratings.count() == 0:
+            return 0
+        points = user_level_ratings.aggregate(models.Sum('value'))['value__sum']
+        bias = user_level_ratings.filter(owner=self).filter(value=THUMBS_UP).count()
+        print user_level_ratings
+        print points
+        print bias
+        return points - bias
 
 class Rating(models.Model):
     RATING_CHOICES = (
@@ -24,12 +34,21 @@ class Rating(models.Model):
     )
     owner = models.ForeignKey(Profile)
     value = models.IntegerField(choices=RATING_CHOICES, default=NO_RATING)
+    level = models.ForeignKey('Level')
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_edited = models.DateTimeField(auto_now=True)
 
 class Comment(models.Model):
     owner = models.ForeignKey(Profile)
     text = models.TextField()
     date_edited = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)
+
+class LevelComment(Comment):
+    level = models.ForeignKey('Level')
+
+class ProfileComment(Comment):
+    profile = models.ForeignKey('Profile')
 
 class Level(models.Model):
     DIFFICULTY_CHOICES = (
@@ -55,14 +74,12 @@ class Level(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
     last_played = models.DateTimeField(null=True, blank=True)
-    ratings = models.ManyToManyField(Rating)
-    comments = models.ManyToManyField(Comment)
 
     def rating(self):
-        if self.ratings.count() == 0:
+        if self.rating_set.count() == 0:
             return 0
         else:
-            return self.ratings.aggregate(models.Sum('value'))['value__sum']
+            return self.rating_set.all().aggregate(models.Sum('value'))['value__sum']
 
     def difficulty_str(self):
         return dict(Level.DIFFICULTY_CHOICES)[self.difficulty]
