@@ -16,7 +16,11 @@
                 {% for level in unrated_levels %}
                 <tr>
                     <td><a href="/play/{{ level.title }}/">{{ level.title }}</a></td>
-                    <td><a href="/user/{{ level.author }}/">{{ level.author }}</a></td>
+                    <td>
+                        {% with level.author as profile %}
+                        {% include 'username.html' %}
+                        {% endwith %}
+                    </td>
                     <td>{{ level.date_created|date:"M j, Y" }}</td>
                 </tr>
                 {% endfor %}
@@ -32,8 +36,10 @@
                 {% for comment in level_reviews %}
                     <div class="{% cycle 'odd' 'even' %}">
                     <h4>{{ comment.date_created|date:"M j, Y" }} by
-                        <a href="/user/{{ comment.owner }}/">{{ comment.owner }}</a> in
-                        <a href="/play/{{ comment.level.title }}/">{{ comment.level.title }}</a></h4>
+                        {% with comment.owner as profile %}
+                        {% include 'username.html' %}
+                        {% endwith %}
+                        in <a href="/play/{{ comment.level.title }}/">{{ comment.level.title }}</a></h4>
                     {{ comment.text }}
                     </div>
                 {% endfor %}

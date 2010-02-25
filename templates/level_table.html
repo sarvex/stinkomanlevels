@@ -10,7 +10,11 @@
             {% for level in levels %}
                 <tr class="{% cycle 'even' 'odd' %}">
                     <td><a href="/play/{{ level.title }}/">{{ level.title }}</a></td>
-                    <td><a href="/user/{{ level.author }}/">{{ level.author }}</a></td>
+                    <td>
+                        {% with level.author as profile %}
+                        {% include 'username.html' %}
+                        {% endwith %}
+                    </td>
                     <td>{{ level.rating }}</td>
                 </tr>
             {% endfor %}

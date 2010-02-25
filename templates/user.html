@@ -42,7 +42,9 @@
             {% for comment in comments %}
             <div class="{% cycle 'odd' 'even' %}">
                 <h4>{{ comment.date_created|date:"M j, Y" }} by
-                    <a href="/user/{{ comment.owner }}/">{{ comment.owner }}</a>
+                    {% with comment.owner as profile %}
+                    {% include 'username.html' %}
+                    {% endwith %}
                 </h4>
                 {{ comment.text }}
             </div>

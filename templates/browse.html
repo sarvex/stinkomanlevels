@@ -19,7 +19,11 @@
         {% for level in levels.object_list %}
             <tr class="{% cycle 'even' 'odd' %}">
                 <td><a href="/play/{{ level.title }}/">{{ level.title }}</a></td>
-                <td><a href="/user/{{ level.author.user.username }}/">{{ level.author.user.username }}</a></td>
+                <td>
+                    {% with level.author as profile %}
+                    {% include 'username.html' %}
+                    {% endwith %}
+                </td>
                 <td>{{ level.rating }}</td>
                 <td>{{ level.major_stage }}.{{ level.minor_stage }}</td>
                 <td>{{ level.difficulty_str }}</td>

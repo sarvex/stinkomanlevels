@@ -27,7 +27,11 @@ function rate(score) {
         {% endifequal %}
     {% endif %}
     <h3>Level Info</h3>
-    Author: <a href="/user/{{ level.author }}/">{{ level.author }}</a><br />
+    Author:
+    {% with level.author as profile %}
+    {% include 'username.html' %}
+    {% endwith %}
+    <br />
     Length: {{ level.length_str }} <br />
     Difficulty: {{ level.difficulty_str }} <br />
     Rating: {{ level.rating }} <br />
@@ -71,7 +75,11 @@ function rate(score) {
     {% if level_reviews %}
         {% for comment in level_reviews %}
         <div class="{% cycle 'odd' 'even' %}">
-        <h4>{{ comment.date_created|date:"M j, Y" }} by <a href="/user/{{ comment.owner }}/">{{ comment.owner }}</a></h4>
+        <h4>{{ comment.date_created|date:"M j, Y" }} by
+        {% with comment.owner as profile %}
+        {% include 'username.html' %}
+        {% endwith %}
+        </h4>
         {{ comment.text }}
         </div>
         {% endfor %}
