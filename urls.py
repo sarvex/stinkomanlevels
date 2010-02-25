@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     (r'^confirm.cgi$', 'stinkomanlevels.main.views.confirm_legacy'),
 
     (r'^img/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"img/%(id)s"}),
+    (r'^oldlevels/$', redirect_to, {'url': MEDIA_URL+"legacy-levels/"}),
     (r'^oldlevels/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"legacy-levels/%(id)s"}),
     (r'^levels/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"levels/%(id)s"}),
     (r'^style/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"img/%(id)s"}),
