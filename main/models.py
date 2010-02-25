@@ -63,7 +63,7 @@ class Level(models.Model):
         (L_MEDIUM, 'Medium'),
         (L_LONG, 'Long'),
     )
-    title = models.CharField(max_length=256, unique=True)
+    title = models.CharField(max_length=255, unique=True)
     major_stage = models.IntegerField()
     minor_stage = models.IntegerField()
     difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES, default=D_MEDIUM)

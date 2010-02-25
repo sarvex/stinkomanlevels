@@ -14,8 +14,7 @@ csv.register_dialect('phpmyadmin', delimiter=';', doublequote=False, escapechar=
 # prepare database
 from main.models import *
 from django.contrib.auth.models import User
-os.system('rm db')
-os.system('./manage.py syncdb --noinput')
+os.system('python manage.py syncdb --noinput')
 
 # load users and add them to the db
 django_user = {}
@@ -124,6 +123,4 @@ for row in csv.reader(open("migrating/userleveldata.csv", "rb"), 'phpmyadmin'):
     rating.level = Level.objects.get(id=django_level[level])
     rating.save()
 
-# backup the fresh database
-os.system('cp db real_db')
 
