@@ -1,5 +1,0 @@
-Options +MultiViews +ExecCGI
-
-RewriteEngine on
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
-RewriteRule	^(.*)$	user.cgi?user=$1
