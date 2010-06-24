@@ -21,9 +21,6 @@ class Profile(models.Model):
             return 0
         points = user_level_ratings.aggregate(models.Sum('value'))['value__sum']
         bias = user_level_ratings.filter(owner=self).filter(value=THUMBS_UP).count()
-        print user_level_ratings
-        print points
-        print bias
         return points - bias
 
 class Rating(models.Model):
@@ -38,11 +35,17 @@ class Rating(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
 
+    def __unicode__(self):
+        return "%s gives %i to %s" % (self.owner, self.value, self.level.title)
+
 class Comment(models.Model):
     owner = models.ForeignKey(Profile)
     text = models.TextField()
     date_edited = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return "%s: %s" % (self.owner, self.text[:30])
 
 class LevelComment(Comment):
     level = models.ForeignKey('Level')
@@ -86,4 +89,7 @@ class Level(models.Model):
 
     def length_str(self):
         return dict(Level.LENGTH_CHOICES)[self.length]
+
+    def __unicode__(self):
+        return self.title
 

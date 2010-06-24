@@ -9,4 +9,4 @@ def global_values(request):
     user = request.user
     request_url = request.get_full_path()
 
-    return locals();
+    return locals()
