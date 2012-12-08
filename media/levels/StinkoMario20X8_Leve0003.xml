@@ -1,9 +1,0 @@
-<SO><y>128</y><x>-16</x><d>0</d><cT>Platform</cT><sT>23</sT></SO>
-<SO><y>128</y><x>176</x><d>1</d><cT>Platform</cT><sT>23</sT></SO>
-<SO><y>128</y><x>368</x><d>2</d><cT>Platform</cT><sT>23</sT></SO>
-<SO><y>128</y><x>560</x><d>3</d><cT>Platform</cT><sT>23</sT></SO>
-<SO><y>296</y><x>-8</x><d>4</d><cT>Platform</cT><sT>23</sT></SO>
-<SO><y>296</y><x>184</x><d>5</d><cT>Platform</cT><sT>23</sT></SO>
-<SO><y>296</y><x>376</x><d>6</d><cT>Platform</cT><sT>23</sT></SO>
-<SO><y>296</y><x>568</x><d>7</d><cT>Platform</cT><sT>23</sT></SO>
-<levelProperties><bkgrdA>4</bkgrdA><playerStartY>64</playerStartY><playerStartX>42</playerStartX><ScrollLockY>true</ScrollLockY><ScrollLockX>false</ScrollLockX></levelProperties>
