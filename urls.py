@@ -5,8 +5,6 @@ from django.views.generic.simple import direct_to_template, redirect_to
 from django.contrib import admin
 admin.autodiscover()
 
-from stinkomanlevels.settings import MEDIA_URL
-
 urlpatterns = patterns('',
     # Example:
     # (r'^stinkomanlevels/', include('stinkomanlevels.foo.urls')),
@@ -21,28 +19,28 @@ urlpatterns = patterns('',
     # legacy urls
     (r'^confirm.cgi$', 'stinkomanlevels.main.views.confirm_legacy'),
 
-    (r'^img/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"img/%(id)s"}),
-    (r'^oldlevels/$', redirect_to, {'url': MEDIA_URL+"legacy-levels/"}),
-    (r'^oldlevels/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"legacy-levels/%(id)s"}),
-    (r'^levels/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"levels/%(id)s"}),
-    (r'^style/(?P<id>.+)$', redirect_to, {'url': MEDIA_URL+"img/%(id)s"}),
+    (r'^img/(?P<id>.+)$', redirect_to, {'url': "/media/img/%(id)s"}),
+    (r'^oldlevels/$', redirect_to, {'url': "/media/legacy-levels/"}),
+    (r'^oldlevels/(?P<id>.+)$', redirect_to, {'url': "/media/legacy-levels/%(id)s"}),
+    (r'^levels/(?P<id>.+)$', redirect_to, {'url': "/media/levels/%(id)s"}),
+    (r'^style/(?P<id>.+)$', redirect_to, {'url': "/media/img/%(id)s"}),
     (r'^play/(?P<level>.+)/externalSwf/(?P<id>.+)$', redirect_to,
-        {'url': MEDIA_URL+"swf/externalSwf/%(id)s"}),
+        {'url': "/media/swf/externalSwf/%(id)s"}),
     (r'^play/externalSwf/(?P<id>.+)$', redirect_to,
-        {'url': MEDIA_URL+"swf/externalSwf/%(id)s"}),
+        {'url': "/media/swf/externalSwf/%(id)s"}),
     (r'^play/(?P<id>.+)/objectLibrary\.swf$', redirect_to,
-        {'url': MEDIA_URL+"swf/objectLibrary.swf"}),
+        {'url': "/media/swf/objectLibrary.swf"}),
     (r'^play/objectLibrary\.swf$', redirect_to,
-        {'url': MEDIA_URL+"swf/objectLibrary.swf"}),
+        {'url': "/media/swf/objectLibrary.swf"}),
     (r'^play/(?P<id>.+)/stinkogame\.swf$', redirect_to,
-        {'url': MEDIA_URL+"swf/stinkogame.swf"}),
+        {'url': "/media/swf/stinkogame.swf"}),
     (r'^play/stinkogame\.swf$', redirect_to,
-        {'url': MEDIA_URL+"swf/stinkogame.swf"}),
-    (r'^common\.js$', redirect_to, {'url': MEDIA_URL+"js/common.js"}),
-    (r'^robots\.txt$', redirect_to, {'url': MEDIA_URL+"robots.txt"}),
-    (r'^favicon\.ico$', redirect_to, {'url': MEDIA_URL+"favicon.ico"}),
-    (r'^style\.css$', redirect_to, {'url': MEDIA_URL+"css/style.css"}),
-    (r'^StinkomanLE-9\.4\.1\.exe$', redirect_to, {'url': MEDIA_URL+"downloads/StinkomanLE-9.4.1.exe"}),
+        {'url': "/media/swf/stinkogame.swf"}),
+    (r'^common\.js$', redirect_to, {'url': "/media/js/common.js"}),
+    (r'^robots\.txt$', redirect_to, {'url': "/media/robots.txt"}),
+    (r'^favicon\.ico$', redirect_to, {'url': "/media/favicon.ico"}),
+    (r'^style\.css$', redirect_to, {'url': "/media/css/style.css"}),
+    (r'^StinkomanLE-9\.4\.1\.exe$', redirect_to, {'url': "/media/downloads/StinkomanLE-9.4.1.exe"}),
 
     # redirects for levels in game
     (r'^play/(.+)/levelData/level1\.(\d+)\.(\d+)\.xml$', 'stinkomanlevels.main.views.level_xml'),
