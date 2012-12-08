@@ -70,7 +70,7 @@ MEDIA_ROOT = absolute('media')
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 if release_mode:
-    MEDIA_URL = 'http://superjoesoftware.com/djangomedia/stinkomanlevels/'
+    MEDIA_URL = 'http://stinkoman.superjoesoftware.com/media/'
 else:
     MEDIA_URL = 'http://localhost:8080/django/stinkomanlevels/'
 
@@ -79,7 +79,7 @@ else:
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 if release_mode:
-    ADMIN_MEDIA_PREFIX= 'http://superjoesoftware.com/djangomedia/stinkomanlevels/admin/'
+    ADMIN_MEDIA_PREFIX= 'http://stinkoman.superjoesoftware.com/media/admin/'
 else:
     ADMIN_MEDIA_PREFIX = 'http://localhost:8080/django/stinkomanlevels/admin/'
 
