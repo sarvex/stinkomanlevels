@@ -8,6 +8,9 @@ def absolute(relative_path):
     return os.path.join(os.path.dirname(__file__), relative_path)
 
 release_mode = os.path.exists(absolute("RELEASE"))
+if release_mode
+  with open(absolute("RELEASE")) as f:
+    server_host = f.read()
 
 DEBUG = not release_mode
 TEMPLATE_DEBUG = DEBUG
@@ -70,7 +73,7 @@ MEDIA_ROOT = absolute('media')
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 if release_mode:
-    MEDIA_URL = 'http://stinkoman.superjoesoftware.com/media/'
+    MEDIA_URL = 'http://' + server_host + '/media/'
 else:
     MEDIA_URL = 'http://localhost:8080/django/stinkomanlevels/'
 
@@ -79,7 +82,7 @@ else:
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 if release_mode:
-    ADMIN_MEDIA_PREFIX= 'http://stinkoman.superjoesoftware.com/media/admin/'
+    ADMIN_MEDIA_PREFIX= 'http://' + server_host + '/media/admin/'
 else:
     ADMIN_MEDIA_PREFIX = 'http://localhost:8080/django/stinkomanlevels/admin/'
 
