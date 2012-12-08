@@ -23,4 +23,4 @@ This is something I made back in high school, so don't expect top quality.
             SetHandler None
     </Directory>
     ```
-  * chmod -R o+rwx /home/andy/
+  * chmod -R o+rwx /home/andy/stinkomanlevels
