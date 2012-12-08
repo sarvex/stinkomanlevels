@@ -1,3 +1,8 @@
+## Custom Stinkoman Levels
+
+This is something I made back in high school, so don't expect top quality.
+[www.stinkomanlevels.com](http://www.stinkomanlevels.com/)
+
 ### Installation
 
   * Linux
@@ -9,7 +14,7 @@
   * Add config to Apache:
 
     ```
-    WSGIScriptAlias / /path/to/stinkomanlevels/wsgi.py
+    WSGIScriptAlias / /home/andy/stinkomanlevels/wsgi.py
 
     Alias /media "/home/andy/stinkomanlevels/media"
     <Directory /media>
@@ -18,3 +23,4 @@
             SetHandler None
     </Directory>
     ```
+  * chmod -R o+rwx /home/andy/
