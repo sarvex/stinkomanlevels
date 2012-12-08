@@ -140,7 +140,11 @@ def register(request):
             to_email = user.email
             send_mail(subject, message, from_email, [to_email], fail_silently=True)
 
-            return HttpResponseRedirect("/register/pending/")
+            another_context = {
+                'username': user.username,
+                'code': profile.activate_code
+            }
+            return render_to_response('pending.html', another_context, context_instance=RequestContext(request))
     else:
         form = RegisterForm()
     return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))

@@ -5,6 +5,9 @@
 {% block content %}
 <h2>Account created</h2>
 <p>
-    An email was sent to the address you provided to confirm your account. Please check your email right now!
+    We used to do email verification but not anymore! Just click this activation link to continue:
+</p>
+<p>
+  <a href="/confirm/{{ username }}/{{ code }}">Activate!</a>
 </p>
 {% endblock %}
