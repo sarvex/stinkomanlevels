@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 from stinkomanlevels.main.models import *
 from stinkomanlevels.main.forms import *
 
-from stinkomanlevels.settings import MEDIA_URL, MEDIA_ROOT
+from stinkomanlevels.settings import MEDIA_ROOT
 
 import string
 import random
@@ -220,14 +220,14 @@ def level_xml(request, level_title, major_stage, minor_stage):
 
     if level.major_stage == major_stage and level.minor_stage == minor_stage:
         # give them the level file
-        return HttpResponseRedirect("%slevels/%s" % (MEDIA_URL, level.file))
+        return HttpResponseRedirect("/media/levels/" + level.file)
     elif level.minor_stage == 3 and level.major_stage == major_stage and minor_stage == 2:
         # it's a boss fight, give them an instant win level so they can skip
         # to the boss
-        return HttpResponseRedirect(MEDIA_URL+"level-templates/instant_win.xml")
+        return HttpResponseRedirect("/media/level-templates/instant_win.xml")
     else:
         # not allowed to play this level
-        return HttpResponseRedirect(MEDIA_URL+"level-templates/instant_death.xml")
+        return HttpResponseRedirect("/media/level-templates/instant_death.xml")
 
 def namecheck(request):
     activeUser(request)
