@@ -8,7 +8,7 @@ def absolute(relative_path):
     return os.path.join(os.path.dirname(__file__), relative_path)
 
 release_mode = os.path.exists(absolute("RELEASE"))
-if release_mode
+if release_mode:
   with open(absolute("RELEASE")) as f:
     server_host = f.read()
 

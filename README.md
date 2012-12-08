@@ -5,6 +5,7 @@
     * mysql-server 
     * Django 1.2.2
     * Apache
+    * python-mysqldb
   * Add config to Apache:
 
     ```
