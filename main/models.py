@@ -45,7 +45,7 @@ class Comment(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return "%s: %s" % (self.owner, self.text[:30])
+        return f"{self.owner}: {self.text[:30]}"
 
 class LevelComment(Comment):
     level = models.ForeignKey('Level')

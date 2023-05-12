@@ -23,31 +23,26 @@ MANAGERS = ADMINS
 
 if release_mode:
     # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_ENGINE = 'mysql'           
+    DATABASE_ENGINE = 'mysql'
     # Or path to database file if using sqlite3.
-    DATABASE_NAME = 'superjoe_stinkoman'             
+    DATABASE_NAME = 'superjoe_stinkoman'
     # Not used with sqlite3.
     DATABASE_USER = 'superjoe_stinkom'
     # Not used with sqlite3.
     DATABASE_PASSWORD = 'THp3IeM7XXr5'
-    # Set to empty string for localhost. Not used with sqlite3.
-    DATABASE_HOST = ''
-    # Set to empty string for default. Not used with sqlite3.
-    DATABASE_PORT = ''
 else:
     # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_ENGINE = 'sqlite3'           
+    DATABASE_ENGINE = 'sqlite3'
     # Or path to database file if using sqlite3.
     DATABASE_NAME = absolute('db')
     # Not used with sqlite3.
-    DATABASE_USER = ''             
+    DATABASE_USER = ''
     # Not used with sqlite3.
-    DATABASE_PASSWORD = ''         
-    # Set to empty string for localhost. Not used with sqlite3.
-    DATABASE_HOST = ''             
-    # Set to empty string for default. Not used with sqlite3.
-    DATABASE_PORT = ''             
-
+    DATABASE_PASSWORD = ''
+# Set to empty string for default. Not used with sqlite3.
+DATABASE_PORT = ''
+# Set to empty string for localhost. Not used with sqlite3.
+DATABASE_HOST = ''
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -69,21 +64,13 @@ USE_I18N = True
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = absolute('media')
 
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
 if release_mode:
-    MEDIA_URL = 'http://' + server_host + '/media/'
+    MEDIA_URL = f'http://{server_host}/media/'
+    ADMIN_MEDIA_PREFIX = f'http://{server_host}/media/admin/'
 else:
     MEDIA_URL = 'http://localhost:8080/django/stinkomanlevels/'
 
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-if release_mode:
-    ADMIN_MEDIA_PREFIX= 'http://' + server_host + '/media/admin/'
-else:
     ADMIN_MEDIA_PREFIX = 'http://localhost:8080/django/stinkomanlevels/admin/'
 
 # Make this unique, and don't share it with anybody.

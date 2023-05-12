@@ -78,16 +78,15 @@ def submit(request):
 
                 level.save()
 
-                return HttpResponseRedirect("/play/%s/" % level.title)
+                return HttpResponseRedirect(f"/play/{level.title}/")
     else:
         form = UploadLevelForm()
     return render_to_response('submit.html', locals(), context_instance=RequestContext(request))
 
 def handle_uploaded_file(f, new_name):
-	dest = open(new_name, 'wb+')
-	for chunk in f.chunks():
-		dest.write(chunk)
-	dest.close()
+    with open(new_name, 'wb+') as dest:
+        for chunk in f.chunks():
+        	dest.write(chunk)
     
 
 def unique_level_path(title):
@@ -96,24 +95,16 @@ def unique_level_path(title):
     it won't collide with another file in the levels media folder
     """
     allowed = string.letters + string.digits + "_-."
-    clean = ""
-    for c in title:
-        if c in allowed:
-            clean += c
-        else:
-            clean += "_"
-
+    clean = "".join(c if c in allowed else "_" for c in title)
     ext = ".xml"
-    if os.path.exists(os.path.join(MEDIA_ROOT, "levels", clean + ext)):
-        # use digits
-        suffix = 2
-        while os.path.exists(os.path.join(MEDIA_ROOT, "levels", clean + str(suffix) + ext)):
-            suffix += 1
-        unique = clean + str(suffix) + ext
-    else:
-        unique = clean + ext
+    if not os.path.exists(os.path.join(MEDIA_ROOT, "levels", clean + ext)):
+        return clean + ext
 
-    return unique
+    # use digits
+    suffix = 2
+    while os.path.exists(os.path.join(MEDIA_ROOT, "levels", clean + str(suffix) + ext)):
+        suffix += 1
+    return clean + str(suffix) + ext
 
 def register(request):
     if request.method == 'POST':
@@ -153,7 +144,7 @@ def register(request):
 def rate(request, level_title, value):
     activeUser(request)
     value = int(value)
-    
+
     level = get_object_or_404(Level, title=level_title)
     profile = request.user.get_profile()
     user_ratings = level.rating_set.filter(owner=profile)
@@ -161,16 +152,13 @@ def rate(request, level_title, value):
     if user_ratings.count() > 0:
         # user has already rated - change their vote
         rating = user_ratings[0]
-        rating.value = value
-        rating.save()
     else: 
         # create a new rating
         rating = Rating()
         rating.owner = profile
-        rating.value = value
         rating.level = level
-        rating.save()
-
+    rating.value = value
+    rating.save()
     results = {
         'user': request.user,
         'user_rating': rating.value,
@@ -200,7 +188,7 @@ def play(request, level_title):
     else:
         form = NewCommentForm()
 
-    level.last_played = datetime.datetime.today()
+    level.last_played = datetime.datetime.now()
     level.save()
 
     level_size = os.path.getsize(os.path.join(MEDIA_ROOT, "levels", level.file))
@@ -209,11 +197,7 @@ def play(request, level_title):
 
     if request.user.is_authenticated():
         user_rating = level.rating_set.filter(owner=request.user.get_profile())
-        if user_rating.count() > 0:
-            user_rating = user_rating[0].value
-        else:
-            user_rating = 0
-
+        user_rating = user_rating[0].value if user_rating.count() > 0 else 0
     return render_to_response('play.html', locals(), context_instance=RequestContext(request))
 
 def level_xml(request, level_title, major_stage, minor_stage):
@@ -224,7 +208,7 @@ def level_xml(request, level_title, major_stage, minor_stage):
 
     if level.major_stage == major_stage and level.minor_stage == minor_stage:
         # give them the level file
-        return HttpResponseRedirect("/media/levels/" + level.file)
+        return HttpResponseRedirect(f"/media/levels/{level.file}")
     elif level.minor_stage == 3 and level.major_stage == major_stage and minor_stage == 2:
         # it's a boss fight, give them an instant win level so they can skip
         # to the boss
@@ -247,14 +231,13 @@ def user_login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             user = authenticate(username=form.cleaned_data.get('username', ''), password=form.cleaned_data.get('password', ''))
-            if user is not None:
-                if user.is_active and user.get_profile().activated:
-                    login(request, user)
-                    return HttpResponseRedirect(form.cleaned_data.get('next_url'))
-                else:
-                    err_msg = 'Your account is not activated.'
-            else:
+            if user is None:
                 err_msg = 'Invalid login.'
+            elif user.is_active and user.get_profile().activated:
+                login(request, user)
+                return HttpResponseRedirect(form.cleaned_data.get('next_url'))
+            else:
+                err_msg = 'Your account is not activated.'
     else:
         form = LoginForm(initial={'next_url': request.GET.get('next', '/')})
     return render_to_response('login.html', {'form': form, 'err_msg': err_msg }, context_instance=RequestContext(request))
@@ -281,11 +264,11 @@ def edit(request, level_title):
 
             level.save()
 
-            return HttpResponseRedirect("/play/%s/" % level.title)
+            return HttpResponseRedirect(f"/play/{level.title}/")
     else:
         init = {
             'title': level.title,
-            'stage': "%s.%s" % (level.major_stage, level.minor_stage),
+            'stage': f"{level.major_stage}.{level.minor_stage}",
             'difficulty': level.difficulty,
             'length': level.length,
             'description': level.description,
@@ -365,19 +348,21 @@ def browse(request):
 
     levels = Level.objects
     if column == 'rating':
-        levels = levels.annotate(rating_value=Sum("rating__value")).order_by("%srating_value" % sign)
+        levels = levels.annotate(rating_value=Sum("rating__value")).order_by(
+            f"{sign}rating_value"
+        )
     elif column == 'author':
-        levels = levels.order_by('%sauthor' % sign, '%stitle' % sign)
+        levels = levels.order_by(f'{sign}author', f'{sign}title')
     elif column == 'stage':
-        levels = levels.order_by('%smajor_stage' % sign, '%sminor_stage' % sign)
+        levels = levels.order_by(f'{sign}major_stage', f'{sign}minor_stage')
     elif column == 'difficulty':
-        levels = levels.order_by('%sdifficulty' % sign, '%slength' % sign)
+        levels = levels.order_by(f'{sign}difficulty', f'{sign}length')
     elif column == 'length':
-        levels = levels.order_by('%slength' % sign, '%sdifficulty' % sign)
+        levels = levels.order_by(f'{sign}length', f'{sign}difficulty')
     elif column == 'datecreated':
-        levels = levels.order_by('%sdate_created' % sign)
+        levels = levels.order_by(f'{sign}date_created')
     else: # title
-        levels = levels.order_by('%stitle' % sign)
+        levels = levels.order_by(f'{sign}title')
 
     try:
         page = int(request.GET.get('page', 1))
@@ -401,7 +386,4 @@ def create_hash(length):
     returns a string of length length with random alphanumeric characters
     """
     chars = string.letters + string.digits
-    code = ""
-    for i in range(length):
-        code += chars[random.randint(0, len(chars)-1)]
-    return code
+    return "".join(chars[random.randint(0, len(chars)-1)] for _ in range(length))

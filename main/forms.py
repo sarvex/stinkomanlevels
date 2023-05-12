@@ -28,7 +28,7 @@ class RegisterForm(forms.Form):
         username = self.cleaned_data['username']
 
         if User.objects.filter(username=username).count() > 0:
-            raise forms.ValidationError("The user '%s' already exists." % username)
+            raise forms.ValidationError(f"The user '{username}' already exists.")
 
         return username
    
@@ -105,7 +105,7 @@ class UploadLevelForm(forms.Form):
         title = self.cleaned_data['title']
 
         if Level.objects.filter(title=title).count() > 0:
-            raise forms.ValidationError("The level title '%s' already exists." % title)
+            raise forms.ValidationError(f"The level title '{title}' already exists.")
 
         return title
 
